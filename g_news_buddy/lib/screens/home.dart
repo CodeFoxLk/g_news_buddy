@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:g_news_buddy/configs/theme/custom_text_styles.dart';
-import 'package:g_news_buddy/models/article_model.dart';
-import 'package:g_news_buddy/screens/screens.dart';
-import 'package:g_news_buddy/widgets/common/image_blurhash.dart';
 import 'package:provider/provider.dart';
 
 import '../configs/theme/ui_parameters.dart';
+import '../models/article_model.dart';
 import '../providers/article_provider.dart';
+import '../widgets/article/home_article_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -29,19 +27,16 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: UIParameters.contentPadding,
-              child: const Align(
-                alignment: Alignment.bottomRight,
-                child: Text("IGN News"),
-              ),
+            const SizedBox(
+              height: 5,
             ),
             Expanded(
                 child: NotificationListener<ScrollEndNotification>(
               onNotification: (t) {
                 if (t.metrics.pixels > 0 && t.metrics.atEdge) {
                   final articleProvider = context.read<ArticleProvider>();
-                  if(!articleProvider.isLoadingTextArticles && !articleProvider.isLoadingVideoArticles) {
+                  if (!articleProvider.isLoadingTextArticles &&
+                      !articleProvider.isLoadingVideoArticles) {
                     articleProvider.loadAllArticles();
                   }
                 } else {}
@@ -57,95 +52,40 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: UIParameters.contentPadding.copyWith(top: 0),
                         itemBuilder: (b, i) {
                           ArticlesData articlesData = articles.articles[i];
-                          return Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: BoxDecoration(
-                                borderRadius: UIParameters.cardBorderRadius),
-                            height: 240,
-                            width: double.maxFinite,
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                    child: BlurHashImage(
-                                        uri: articlesData.thumbnails[1].url!)),
-                                Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Container(
-                                    // alignment: Alignment.bottomCenter,
-                                    width: double.maxFinite,
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            colors: [
-                                          Colors.transparent,
-                                          Theme.of(context)
-                                              .scaffoldBackgroundColor
-                                        ])),
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: (articlesData.metadata != null)
-                                        ? Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              if (articlesData
-                                                      .metadata?.title !=
-                                                  null)
-                                                Text(
-                                                  articlesData.metadata!.title!,
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: kTitleTs.copyWith(
-                                                      color: Theme.of(context)
-                                                          .primaryColor),
-                                                ),
-                                              if (articlesData
-                                                      .metadata?.description !=
-                                                  null)
-                                                Text(
-                                                  articlesData
-                                                      .metadata!.description!,
-                                                  maxLines: 2,
-                                                ),
-                                              const SizedBox(
-                                                height: 4,
-                                              ),
-                                              Text(
-                                                  articlesData
-                                                      .metadata!.publishDate,
-                                                  style: const TextStyle(
-                                                      fontSize: 10))
-                                            ],
-                                          )
-                                        : const SizedBox(),
-                                  ),
-                                ),
-                                Positioned.fill(
-                                    child: Material(
-                                  type: MaterialType
-                                      .transparency, // to show tapping ripple effect
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, ArticleScreen.route,
-                                          arguments: articlesData);
-                                    },
-                                  ),
-                                ))
-                              ],
-                            ),
-                          );
+                          return HomeArticleCard(articlesData: articlesData);
                         },
                         separatorBuilder: (b, i) => const SizedBox(
                           height: 25,
                         ),
                       ),
               ),
-            ))
+            )),
+            Center(
+              child: Consumer<ArticleProvider>(
+                  builder: (_, articles, ___) => Visibility(
+                      visible: articles.isLoadingTextArticles && articles.loadedRounds > 0,
+                      child: const SpinKitFadingCube(
+                        size: 20,
+                        color: Colors.white,
+                      ))),
+            ),
+            Padding(
+                padding: UIParameters.contentPadding,
+                child: Opacity(
+                  opacity: 0.6,
+                  child: DefaultTextStyle(
+                    style: const TextStyle(
+                      fontSize: 11,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: const [
+                        Text("All data from the IGN News Api"),
+                        Text("https://ign-apis.herokuapp.com/")
+                      ],
+                    ),
+                  ),
+                )),
           ],
         ),
       ),

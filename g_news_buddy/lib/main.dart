@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => ArticleProvider())],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        title: 'G News Buddy',
         routes: {
           HomeScreen.route: (context) => const HomeScreen(),
           ArticleScreen.route: (context) => const ArticleScreen(),

@@ -1,4 +1,4 @@
-package com.example.g_news_buddy
+package com.codefox.g_news_buddy
 
 import io.flutter.embedding.android.FlutterActivity
 

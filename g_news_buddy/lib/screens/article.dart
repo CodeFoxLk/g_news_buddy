@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:g_news_buddy/configs/theme/ui_parameters.dart';
-import 'package:g_news_buddy/models/article_model.dart';
+import '../configs/theme/ui_parameters.dart';
+import '../models/article_model.dart';
 import '../widgets/widgets.dart';
 
 class ArticleScreen extends StatefulWidget {
@@ -39,7 +39,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                     flexibleSpace: FlexibleSpaceBar(
                       centerTitle: false,
                       expandedTitleScale: 1.4,
-                      title: Text(_data!.metadata!.title!, textScaleFactor: 1, maxLines: 3,),
+                      title: Text(_data!.metadata!.title!, textScaleFactor: 1, maxLines: 3, overflow: TextOverflow.ellipsis,),
                       //stretchModes: [],
                       titlePadding: UIParameters.contentPadding,
                       collapseMode: CollapseMode.pin,
